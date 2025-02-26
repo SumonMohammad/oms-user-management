@@ -2,13 +2,8 @@ package service
 
 import (
 	"context"
-	//"google.golang.org/grpc/codes"
-	//"google.golang.org/grpc/status"
-
-	//"fmt"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	//pg "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models/pg"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
 )
 
@@ -19,14 +14,14 @@ type AuditLogs interface {
 }
 
 type AuditLog struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type AuditLogReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) AuditLog() AuditLogs {
+func (ms *OmsUserManagementService) AuditLog() AuditLogs {
 	return &AuditLogReceiver{
 		ms,
 	}

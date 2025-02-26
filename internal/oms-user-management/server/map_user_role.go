@@ -5,8 +5,8 @@ import (
 	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 )
 
-func (s *OmsUserManagementServer) CreateGroupPermission(ctx context.Context, req *grpc.CreateGroupPermissionRequest) (*grpc.CreateGroupPermissionResponse, error) {
-	res, err := s.service.GroupPermission().CreateGroupPermission(ctx, req)
+func (s *OmsUserManagementServer) CreateMapUserRole(ctx context.Context, req *grpc.CreateMapUserRoleRequest) (*grpc.CreateMapUserRoleResponse, error) {
+	res, err := s.service.MapUserRole().CreateMapUserRole(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -15,8 +15,8 @@ func (s *OmsUserManagementServer) CreateGroupPermission(ctx context.Context, req
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) UpdateGroupPermission(ctx context.Context, req *grpc.UpdateGroupPermissionRequest) (*grpc.UpdateGroupPermissionResponse, error) {
-	res, err := s.service.GroupPermission().UpdateGroupPermission(ctx, req)
+func (s *OmsUserManagementServer) UpdateMapUserRole(ctx context.Context, req *grpc.UpdateMapUserRoleRequest) (*grpc.UpdateMapUserRoleResponse, error) {
+	res, err := s.service.MapUserRole().UpdateMapUserRole(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -25,8 +25,8 @@ func (s *OmsUserManagementServer) UpdateGroupPermission(ctx context.Context, req
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) GetGroupPermissions(ctx context.Context, req *grpc.GetGroupPermissionsRequest) (*grpc.GetGroupPermissionsResponse, error) {
-	res, err := s.service.GroupPermission().GetGroupPermissions(ctx, req)
+func (s *OmsUserManagementServer) GetMapUserRoles(ctx context.Context, req *grpc.GetMapUserRolesRequest) (*grpc.GetMapUserRolesResponse, error) {
+	res, err := s.service.MapUserRole().GetMapUserRoles(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -35,8 +35,8 @@ func (s *OmsUserManagementServer) GetGroupPermissions(ctx context.Context, req *
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) DeleteGroupPermission(ctx context.Context, req *grpc.DeleteGroupPermissionRequest) (*grpc.DeleteGroupPermissionResponse, error) {
-	res, err := s.service.GroupPermission().DeleteGroupPermission(ctx, req)
+func (s *OmsUserManagementServer) DeleteMapUserRole(ctx context.Context, req *grpc.DeleteMapUserRoleRequest) (*grpc.DeleteMapUserRoleResponse, error) {
+	res, err := s.service.MapUserRole().DeleteMapUserRole(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -45,8 +45,8 @@ func (s *OmsUserManagementServer) DeleteGroupPermission(ctx context.Context, req
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) GetGroupPermissionById(ctx context.Context, req *grpc.GetGroupPermissionByIdRequest) (*grpc.GetGroupPermissionByIdResponse, error) {
-	res, err := s.service.GroupPermission().GetGroupPermissionById(ctx, req)
+func (s *OmsUserManagementServer) GetMapUserRoleById(ctx context.Context, req *grpc.GetMapUserRoleByIdRequest) (*grpc.GetMapUserRoleByIdResponse, error) {
+	res, err := s.service.MapUserRole().GetMapUserRoleById(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err

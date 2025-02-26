@@ -2,13 +2,10 @@ package service
 
 import (
 	"context"
-	"time"
-
-	//"fmt"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	//pg "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models/pg"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
+	"time"
 )
 
 type Tws interface {
@@ -19,14 +16,14 @@ type Tws interface {
 }
 
 type TWS struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type TwsReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) TWS() Tws {
+func (ms *OmsUserManagementService) TWS() Tws {
 	return &TwsReceiver{
 		ms,
 	}

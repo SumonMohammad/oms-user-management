@@ -9,142 +9,132 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type GroupPermissions interface {
-	CreateGroupPermission(ctx context.Context, req *grpc.CreateGroupPermissionRequest) (*grpc.CreateGroupPermissionResponse, error)
-	UpdateGroupPermission(ctx context.Context, req *grpc.UpdateGroupPermissionRequest) (*grpc.UpdateGroupPermissionResponse, error)
-	GetGroupPermissions(ctx context.Context, req *grpc.GetGroupPermissionsRequest) (*grpc.GetGroupPermissionsResponse, error)
-	DeleteGroupPermission(ctx context.Context, req *grpc.DeleteGroupPermissionRequest) (*grpc.DeleteGroupPermissionResponse, error)
-	GetGroupPermissionById(ctx context.Context, req *grpc.GetGroupPermissionByIdRequest) (*grpc.GetGroupPermissionByIdResponse, error)
+type MapUserRoles interface {
+	CreateMapUserRole(ctx context.Context, req *grpc.CreateMapUserRoleRequest) (*grpc.CreateMapUserRoleResponse, error)
+	UpdateMapUserRole(ctx context.Context, req *grpc.UpdateMapUserRoleRequest) (*grpc.UpdateMapUserRoleResponse, error)
+	GetMapUserRoles(ctx context.Context, req *grpc.GetMapUserRolesRequest) (*grpc.GetMapUserRolesResponse, error)
+	DeleteMapUserRole(ctx context.Context, req *grpc.DeleteMapUserRoleRequest) (*grpc.DeleteMapUserRoleResponse, error)
+	GetMapUserRoleById(ctx context.Context, req *grpc.GetMapUserRoleByIdRequest) (*grpc.GetMapUserRoleByIdResponse, error)
 }
 
-type GroupPermission struct {
+type MapUserRole struct {
 	service *OmsUserManagementService
 }
 
-type GroupPermissionReceiver struct {
+type MapUserRoleReceiver struct {
 	*OmsUserManagementService
 }
 
-func (ms *OmsUserManagementService) GroupPermission() GroupPermissions {
-	return &GroupPermissionReceiver{
+func (ms *OmsUserManagementService) MapUserRole() MapUserRoles {
+	return &MapUserRoleReceiver{
 		ms,
 	}
 }
 
-func (s *GroupPermissionReceiver) CreateGroupPermission(ctx context.Context, req *grpc.CreateGroupPermissionRequest) (*grpc.CreateGroupPermissionResponse, error) {
+func (s *MapUserRoleReceiver) CreateMapUserRole(ctx context.Context, req *grpc.CreateMapUserRoleRequest) (*grpc.CreateMapUserRoleResponse, error) {
 
-	groupPermission := &model.GroupPermission{
-		Name:        req.Name,
-		Description: req.Description,
-		IsDeleted:   req.IsDeleted,
-		IsEnabled:   req.IsEnabled,
-		Status:      req.Status.String(),
+	mapUserRole := &model.MapUserRole{
+		UserId:    req.UserId,
+		RoleId:    req.RoleId,
+		IsEnabled: req.IsEnabled,
 	}
 
 	// Call the database method to create the trader
-	err := s.db.GroupPermission().CreateGroupPermission(ctx, groupPermission)
+	err := s.db.MapUserRole().CreateMapUserRole(ctx, mapUserRole)
 	if err != nil {
-		msg := "failed to create group Permission"
+		msg := "failed to create mapUserRole"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
 
 	// Return a successful response
-	return &grpc.CreateGroupPermissionResponse{
+	return &grpc.CreateMapUserRoleResponse{
 		Code: 0,
 	}, nil
 }
 
-func (s *GroupPermissionReceiver) UpdateGroupPermission(ctx context.Context, req *grpc.UpdateGroupPermissionRequest) (*grpc.UpdateGroupPermissionResponse, error) {
+func (s *MapUserRoleReceiver) UpdateMapUserRole(ctx context.Context, req *grpc.UpdateMapUserRoleRequest) (*grpc.UpdateMapUserRoleResponse, error) {
 
-	groupPermission := &model.GroupPermission{
-		Name:        req.Name,
-		Description: req.Description,
-		IsDeleted:   req.IsDeleted,
-		IsEnabled:   req.IsEnabled,
-		Status:      req.Status.String(),
+	mapUserRole := &model.MapUserRole{
+		ID:        req.Id,
+		UserId:    req.UserId,
+		RoleId:    req.RoleId,
+		IsEnabled: req.IsEnabled,
 	}
 	// Call the database method to create the trader
-	err := s.db.GroupPermission().UpdateGroupPermission(ctx, groupPermission)
+	err := s.db.MapUserRole().UpdateMapUserRole(ctx, mapUserRole)
 	if err != nil {
-		msg := "failed to update group Permission"
+		msg := "failed to update mapUserRole"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
 
 	// Return a successful response
-	return &grpc.UpdateGroupPermissionResponse{
+	return &grpc.UpdateMapUserRoleResponse{
 		Code: 0,
 	}, nil
 }
-func (s *GroupPermissionReceiver) GetGroupPermissions(ctx context.Context, req *grpc.GetGroupPermissionsRequest) (*grpc.GetGroupPermissionsResponse, error) {
+func (s *MapUserRoleReceiver) GetMapUserRoles(ctx context.Context, req *grpc.GetMapUserRolesRequest) (*grpc.GetMapUserRolesResponse, error) {
 
-	res, count, err := s.db.GroupPermission().GetGroupPermissions(ctx, req)
+	res, count, err := s.db.MapUserRole().GetMapUserRoles(ctx, req)
 	if err != nil {
-		msg := "failed to get group Permissions"
+		msg := "failed to get MapUserRole"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
-	groupPermissions := []*grpc.GetGroupPermissionsResponsePermissionGroupList{}
+	mapUserRoles := []*grpc.GetMapUserRolesResponseMappedUserRoleList{}
 
 	for _, item := range res {
 
-		groupPermission := &grpc.GetGroupPermissionsResponsePermissionGroupList{
-			Id:          item.ID,
-			Name:        item.Name,
-			Description: item.Description,
-			IsDeleted:   item.IsDeleted,
-			IsEnabled:   item.IsEnabled,
+		mapUserRole := &grpc.GetMapUserRolesResponseMappedUserRoleList{
+			Id:        item.ID,
+			UserId:    item.UserId,
+			RoleId:    item.RoleId,
+			IsEnabled: item.IsEnabled,
 		}
-		groupPermissions = append(groupPermissions, groupPermission)
+		mapUserRoles = append(mapUserRoles, mapUserRole)
 	}
-	return &grpc.GetGroupPermissionsResponse{
-		PermissionGroups: groupPermissions,
+	return &grpc.GetMapUserRolesResponse{
+		MappedUserRoleLists: mapUserRoles,
 		PaginationResponse: &grpc.PaginationInfoResponse{
 			TotalRecordCount: int32(count),
 		},
 	}, nil
 }
 
-func (s *GroupPermissionReceiver) DeleteGroupPermission(ctx context.Context, req *grpc.DeleteGroupPermissionRequest) (*grpc.DeleteGroupPermissionResponse, error) {
-	groupPermission := &model.GroupPermission{
+func (s *MapUserRoleReceiver) DeleteMapUserRole(ctx context.Context, req *grpc.DeleteMapUserRoleRequest) (*grpc.DeleteMapUserRoleResponse, error) {
+	mapUserRole := &model.MapUserRole{
 		ID: req.Id,
 	}
 
 	// Call the database method to create the trader
-	err := s.db.GroupPermission().DeleteGroupPermission(ctx, groupPermission)
+	err := s.db.MapUserRole().DeleteMapUserRole(ctx, mapUserRole)
 	if err != nil {
-		msg := "failed to delete Group Permission"
+		msg := "failed to delete mapUserRole"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
 
 	// Return a successful response
-	return &grpc.DeleteGroupPermissionResponse{
+	return &grpc.DeleteMapUserRoleResponse{
 		Code: 0,
 	}, nil
 }
 
-func (s *GroupPermissionReceiver) GetGroupPermissionById(ctx context.Context, req *grpc.GetGroupPermissionByIdRequest) (*grpc.GetGroupPermissionByIdResponse, error) {
+func (s *MapUserRoleReceiver) GetMapUserRoleById(ctx context.Context, req *grpc.GetMapUserRoleByIdRequest) (*grpc.GetMapUserRoleByIdResponse, error) {
 
-	groupPermission, err := s.db.GroupPermission().GetGroupPermissionById(ctx, req)
+	mapUserRole, err := s.db.MapUserRole().GetMapUserRoleById(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, "Failed to fetch Employee", zap.Error(err))
 		return nil, status.Error(codes.Internal, "Failed to fetch Employee")
 	}
-	statusOfPermission := grpc.Status_PENDING
-	if groupPermission.Status == "ACTIVE" {
-		statusOfPermission = grpc.Status_ACTIVE
-	}
 
 	// Map the raw data to the gRPC response format
-	response := &grpc.GetGroupPermissionByIdResponse{
-		Id:          groupPermission.ID,
-		Name:        groupPermission.Name,
-		Description: groupPermission.Description,
-		Status:      statusOfPermission,
-		IsDeleted:   groupPermission.IsDeleted,
-		IsEnabled:   groupPermission.IsEnabled,
+	response := &grpc.GetMapUserRoleByIdResponse{
+		Id:        mapUserRole.ID,
+		UserId:    mapUserRole.UserId,
+		RoleId:    mapUserRole.RoleId,
+		IsEnabled: mapUserRole.IsEnabled,
 	}
 
 	return response, nil

@@ -2,168 +2,144 @@ package service
 
 import (
 	"context"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
-	//"fmt"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	//pg "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models/pg"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
 )
 
 type Employees interface {
 	CreateEmployee(ctx context.Context, req *grpc.CreateEmployeeRequest) (*grpc.CreateEmployeeResponse, error)
 	UpdateEmployee(ctx context.Context, req *grpc.UpdateEmployeeRequest) (*grpc.UpdateEmployeeResponse, error)
-	GetEmployees(ctx context.Context, req *grpc.GetEmployeesRequest) (*grpc.GetEmployeesResponse, error)
-	DeleteEmployee(ctx context.Context, req *grpc.DeleteEmployeeRequest) (*grpc.DeleteEmployeeResponse, error)
-	GetEmployeeByIdOrEmail(ctx context.Context, req *grpc.GetEmployeeByIdOrEmailRequest) (*grpc.GetEmployeeByIdOrEmailResponse, error)
+	GetEmployeeById(ctx context.Context, userId int64) (*grpc.GetEmployeeByIdResponse, error)
+	//GetInvestors(ctx context.Context, page int32, limit int32) (*grpc.GetInvestorsResponse, error)
 }
 
 type Employee struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type EmployeeReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) Employee() Employees {
+func (ms *OmsUserManagementService) Employee() Employees {
 	return &EmployeeReceiver{
 		ms,
 	}
 }
 
-func (s *EmployeeReceiver) CreateEmployee(ctx context.Context, req *grpc.CreateEmployeeRequest) (*grpc.CreateEmployeeResponse, error) {
+func (s *OmsUserManagementService) CreateEmployee(ctx context.Context, req *grpc.CreateEmployeeRequest) (*grpc.CreateEmployeeResponse, error) {
+	var userId int64
+	var err error
+	err = s.db.InTx(ctx, func(ctx context.Context, tx model.Repository) error {
 
-	employee := &model.Employee{
-		FullName:     req.FullName,
-		Designation:  req.Designation,
-		EmailAddress: req.EmailAddress,
-		PhoneNumber:  req.PhoneNumber,
-		NidNumber:    req.NidNumber,
-		IsDeleted:    req.IsDeleted,
-		IsEnabled:    req.IsEnabled,
-		Status:       req.Status,
-	}
+		// Create OMSUser struct
+		user := &model.User{
+			UserName:     req.UserName,
+			AuthId:       req.AuthId,
+			UserType:     req.UserType.String(),
+			EmailAddress: req.EmailAddress,
+			PhoneNumber:  req.PhoneNumber,
+			CountryCode:  req.CountryCode,
+			CanLogin:     req.CanLogin,
+			Nid:          req.Nid,
+			IsEnabled:    req.IsEnabled,
+			IsVerified:   req.IsVerified,
+		}
 
-	// Call the database method to create the trader
-	err := s.db.Employee().CreateEmployee(ctx, employee)
-	if err != nil {
-		msg := "failed to create employee"
-		s.log.Error(ctx, msg, zap.Error(err))
-		return nil, err
-	}
+		// Insert OMSUser and retrieve the generated ID
+		userId, err = tx.User().CreateEmployee(ctx, user)
+		if err != nil {
+			msg := "Failed to create user"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
 
-	// Return a successful response
+		// Create Investor struct
+		employee := &model.Employee{
+			UserId:      userId, // Assign the newly created OMS user ID
+			BranchId:    req.BranchId,
+			Designation: req.Designation,
+			Description: req.Description,
+		}
+
+		err = tx.Employee().CreateEmployee(ctx, employee)
+		if err != nil {
+			msg := "Failed to create employee"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
+
+		return err
+	})
+
 	return &grpc.CreateEmployeeResponse{
 		Code: 0,
-	}, nil
+	}, err
 }
 
-func (s *EmployeeReceiver) UpdateEmployee(ctx context.Context, req *grpc.UpdateEmployeeRequest) (*grpc.UpdateEmployeeResponse, error) {
+func (s *OmsUserManagementService) UpdateEmployee(ctx context.Context, req *grpc.UpdateEmployeeRequest) (*grpc.UpdateEmployeeResponse, error) {
 
-	employee := &model.Employee{
-		ID:           req.Id,
-		FullName:     req.FullName,
-		Designation:  req.Designation,
-		EmailAddress: req.EmailAddress,
-		PhoneNumber:  req.PhoneNumber,
-		NidNumber:    req.NidNumber,
-		IsDeleted:    req.IsDeleted,
-		IsEnabled:    req.IsEnabled,
-		Status:       req.Status,
-	}
+	var userId int64
+	var err error
+	err = s.db.InTx(ctx, func(ctx context.Context, tx model.Repository) error {
 
-	// Call the database method to create the trader
-	err := s.db.Employee().UpdateEmployee(ctx, employee)
-	if err != nil {
-		msg := "failed to update oms user"
-		s.log.Error(ctx, msg, zap.Error(err))
-		return nil, err
-	}
+		employee := &model.Employee{
+			UserId:      userId, // Assign the newly created OMS user ID
+			BranchId:    req.BranchId,
+			Designation: req.Designation,
+			Description: req.Description,
+		}
 
-	// Return a successful response
+		userId, err = tx.Employee().UpdateEmployee(ctx, employee)
+		if err != nil {
+			msg := "Failed to update Employee"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
+
+		user := &model.User{
+			UserName:     req.UserName,
+			AuthId:       req.AuthId,
+			UserType:     req.UserType.String(),
+			EmailAddress: req.EmailAddress,
+			PhoneNumber:  req.PhoneNumber,
+			CountryCode:  req.CountryCode,
+			CanLogin:     req.CanLogin,
+			Nid:          req.Nid,
+			IsEnabled:    req.IsEnabled,
+			IsVerified:   req.IsVerified,
+		}
+
+		err = tx.User().UpdateEmployee(ctx, user)
+		if err != nil {
+			msg := "Failed to update user"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
+
+		return nil
+	})
+
 	return &grpc.UpdateEmployeeResponse{
 		Code: 0,
-	}, nil
-}
-func (s *EmployeeReceiver) GetEmployees(ctx context.Context, req *grpc.GetEmployeesRequest) (*grpc.GetEmployeesResponse, error) {
-
-	res, count, err := s.db.Employee().GetEmployees(ctx, req)
-	if err != nil {
-		msg := "failed to get employee"
-		s.log.Error(ctx, msg, zap.Error(err))
-		return nil, err
-	}
-	employees := []*grpc.GetEmployeesResponseEmployeeList{}
-
-	for _, item := range res {
-
-		employee := &grpc.GetEmployeesResponseEmployeeList{
-			Id:           item.ID,
-			FullName:     item.FullName,
-			Designation:  item.Designation,
-			EmailAddress: item.EmailAddress,
-			PhoneNumber:  item.PhoneNumber,
-			NidNumber:    item.NidNumber,
-			IsDeleted:    item.IsDeleted,
-			IsEnabled:    item.IsEnabled,
-			Status:       item.Status,
-		}
-		employees = append(employees, employee)
-	}
-	return &grpc.GetEmployeesResponse{
-		Employees: employees,
-		PaginationResponse: &grpc.PaginationInfoResponse{
-			TotalRecordCount: int32(count),
-		},
-	}, nil
+	}, err
 }
 
-func (s *EmployeeReceiver) DeleteEmployee(ctx context.Context, req *grpc.DeleteEmployeeRequest) (*grpc.DeleteEmployeeResponse, error) {
-	employee := &model.Employee{
-		ID: req.Id,
-	}
-
-	// Call the database method to create the trader
-	err := s.db.Employee().DeleteEmployee(ctx, employee)
+func (s *OmsUserManagementService) GetEmployeeById(ctx context.Context, userId int64) (*grpc.GetEmployeeByIdResponse, error) {
+	userInfoWithEmployeeType, err := s.db.Employee().GetEmployeeById(ctx, userId)
 	if err != nil {
-		msg := "failed to delete employee"
-		s.log.Error(ctx, msg, zap.Error(err))
+		s.log.Error(ctx, "Failed to get employee", zap.Error(err))
 		return nil, err
 	}
 
-	// Return a successful response
-	return &grpc.DeleteEmployeeResponse{
-		Code: 0,
-	}, nil
-}
-
-func (s *EmployeeReceiver) GetEmployeeByIdOrEmail(ctx context.Context, req *grpc.GetEmployeeByIdOrEmailRequest) (*grpc.GetEmployeeByIdOrEmailResponse, error) {
-	// Call the database layer to fetch the trader by ID or email
-	employee, err := s.db.Employee().GetEmployeeByIdOrEmail(ctx, req)
-	if err != nil {
-		// Handle error if no trader is found or any other error occurs
-		s.log.Error(ctx, "Failed to fetch Employee by ID or email", zap.Error(err))
-		if err.Error() == "Employee not found" {
-			return nil, status.Error(codes.NotFound, "Employee not found")
-		}
-		return nil, status.Error(codes.Internal, "Failed to fetch Employee")
-	}
-
-	// Map the result from the database layer to the GRPC response
-	response := &grpc.GetEmployeeByIdOrEmailResponse{
-		Id:           employee.Id,
-		FullName:     employee.FullName,
-		Designation:  employee.Designation,
-		EmailAddress: employee.EmailAddress,
-		PhoneNumber:  employee.PhoneNumber,
-		NidNumber:    employee.NidNumber,
-		IsEnabled:    employee.IsEnabled,
-		Status:       employee.Status,
-		IsDeleted:    employee.IsDeleted,
-	}
-
-	return response, nil
+	return &grpc.GetEmployeeByIdResponse{
+		UserId:       userInfoWithEmployeeType.EmployeeUserId, // Now accessible
+		UserName:     userInfoWithEmployeeType.UserName,
+		EmailAddress: userInfoWithEmployeeType.EmailAddress,
+		PhoneNumber:  userInfoWithEmployeeType.PhoneNumber,
+		CountryCode:  userInfoWithEmployeeType.CountryCode,
+		BranchId:     userInfoWithEmployeeType.BranchId,
+		Designation:  userInfoWithEmployeeType.Designation,
+	}, err
 }

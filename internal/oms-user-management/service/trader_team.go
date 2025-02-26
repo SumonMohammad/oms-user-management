@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
 )
 
@@ -14,14 +14,14 @@ type TraderTeams interface {
 	DeleteTeam(ctx context.Context, req *grpc.DeleteTraderTeamRequest) (*grpc.DeleteTraderTeamResponse, error)
 }
 type TraderTeam struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type TraderTeamReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) TraderTeam() TraderTeams {
+func (ms *OmsUserManagementService) TraderTeam() TraderTeams {
 	return &TraderTeamReceiver{
 		ms,
 	}

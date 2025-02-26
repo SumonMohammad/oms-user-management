@@ -3,10 +3,10 @@ package server
 
 import (
 	"context"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 )
 
-func (s *GrpctestServer) CreateTeam(ctx context.Context, req *grpc.CreateTraderTeamRequest) (*grpc.CreateTraderTeamResponse, error) {
+func (s *OmsUserManagementServer) CreateTeam(ctx context.Context, req *grpc.CreateTraderTeamRequest) (*grpc.CreateTraderTeamResponse, error) {
 	res, err := s.service.TraderTeam().CreateTeam(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
@@ -16,7 +16,7 @@ func (s *GrpctestServer) CreateTeam(ctx context.Context, req *grpc.CreateTraderT
 	return res, nil
 }
 
-func (s *GrpctestServer) GetTeams(ctx context.Context, req *grpc.GetTraderTeamRequest) (*grpc.GetTraderTeamResponse, error) {
+func (s *OmsUserManagementServer) GetTeams(ctx context.Context, req *grpc.GetTraderTeamRequest) (*grpc.GetTraderTeamResponse, error) {
 	res, err := s.service.TraderTeam().GetTeams(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
@@ -26,7 +26,7 @@ func (s *GrpctestServer) GetTeams(ctx context.Context, req *grpc.GetTraderTeamRe
 	return res, nil
 }
 
-func (s *GrpctestServer) UpdateTeam(ctx context.Context, req *grpc.UpdateTraderTeamRequest) (*grpc.UpdateTraderTeamResponse, error) {
+func (s *OmsUserManagementServer) UpdateTeam(ctx context.Context, req *grpc.UpdateTraderTeamRequest) (*grpc.UpdateTraderTeamResponse, error) {
 	res, err := s.service.TraderTeam().UpdateTeam(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
@@ -36,7 +36,7 @@ func (s *GrpctestServer) UpdateTeam(ctx context.Context, req *grpc.UpdateTraderT
 	return res, nil
 }
 
-func (s *GrpctestServer) DeleteTeam(ctx context.Context, req *grpc.DeleteTraderTeamRequest) (*grpc.DeleteTraderTeamResponse, error) {
+func (s *OmsUserManagementServer) DeleteTeam(ctx context.Context, req *grpc.DeleteTraderTeamRequest) (*grpc.DeleteTraderTeamResponse, error) {
 	res, err := s.service.TraderTeam().DeleteTeam(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())

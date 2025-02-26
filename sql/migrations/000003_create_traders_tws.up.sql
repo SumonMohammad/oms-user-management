@@ -8,7 +8,5 @@ CREATE TABLE IF NOT EXISTS map_trader_tws (
     expire_at TIMESTAMPTZ DEFAULT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL,
-    deleted_at TIMESTAMPTZ DEFAULT NULL,
-    CONSTRAINT fk_trader FOREIGN KEY (trader_id) REFERENCES traders(id) ON DELETE SET NULL,
-    CONSTRAINT fk_tws FOREIGN KEY (tws_id) REFERENCES tws(id) ON DELETE SET NULL
+    deleted_at TIMESTAMPTZ DEFAULT NULL
     );

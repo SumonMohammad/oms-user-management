@@ -2,153 +2,190 @@ package service
 
 import (
 	"context"
-	//"fmt"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	//pg "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models/pg"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
 )
 
 type Investors interface {
 	CreateInvestor(ctx context.Context, req *grpc.CreateInvestorRequest) (*grpc.CreateInvestorResponse, error)
 	UpdateInvestor(ctx context.Context, req *grpc.UpdateInvestorRequest) (*grpc.UpdateInvestorResponse, error)
-	GetInvestorByIdOrEmail(ctx context.Context, req *grpc.GetInvestorByIdOrEmailRequest) (*grpc.GetInvestorByIdOrEmailResponse, error)
-	GetInvestors(ctx context.Context, req *grpc.GetInvestorsRequest) (*grpc.GetInvestorsResponse, error)
+	GetInvestorById(ctx context.Context, userId int64) (*grpc.GetInvestorByIdResponse, error)
+	GetInvestors(ctx context.Context, page int32, limit int32) (*grpc.GetInvestorsResponse, error)
 }
 
 type Investor struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type InvestorReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) Investor() Investors {
+func (ms *OmsUserManagementService) Investor() Investors {
 	return &InvestorReceiver{
 		ms,
 	}
 }
 
-func (s *InvestorReceiver) CreateInvestor(ctx context.Context, req *grpc.CreateInvestorRequest) (*grpc.CreateInvestorResponse, error) {
+func (s *OmsUserManagementService) CreateInvestor(ctx context.Context, req *grpc.CreateInvestorRequest) (*grpc.CreateInvestorResponse, error) {
+	var userId int64
+	var err error
+	err = s.db.InTx(ctx, func(ctx context.Context, tx model.Repository) error {
 
-	investor := &model.Investor{
-		UserId:          req.UserId,
-		PrimaryTwsId:    req.PrimaryTwsId,
-		SecondaryTwsId:  req.SecondaryTwsId,
-		BoAccountNumber: req.BoAccountNumber,
-		Status:          req.Status.String(),
-		CanTrade:        req.CanTrade,
-		ReadOnly:        req.ReadOnly,
-		IsEnabled:       req.IsEnabled,
-		IsDeleted:       req.IsDeleted,
-	}
+		// Create OMSUser struct
+		omsUser := &model.User{
+			UserName:     req.UserName,
+			AuthId:       req.AuthId,
+			UserType:     req.UserType.String(),
+			EmailAddress: req.EmailAddress,
+			PhoneNumber:  req.PhoneNumber,
+			CountryCode:  req.CountryCode,
+			CanLogin:     req.CanLogin,
+			Nid:          req.Nid,
+			IsEnabled:    req.IsEnabled,
+			IsVerified:   req.IsVerified,
+		}
 
-	// Call the database method to create the trader
-	err := s.db.Investor().CreateInvestor(ctx, investor)
-	if err != nil {
-		msg := "failed to create investor"
-		s.log.Error(ctx, msg, zap.Error(err))
-		return nil, err
-	}
+		// Insert OMSUser and retrieve the generated ID
+		userId, err = tx.User().CreateInvestor(ctx, omsUser)
+		if err != nil {
+			msg := "Failed to create OMS user"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
 
-	// Return a successful response
+		// Create Investor struct
+		investor := &model.Investor{
+			UserId:          userId, // Assign the newly created OMS user ID
+			PrimaryTwsId:    req.PrimaryTwsId,
+			SecondaryTwsId:  req.SecondaryTwsId,
+			ClientCode:      req.ClientCode,
+			BoAccountNumber: req.BoAccountNumber,
+			Status:          req.Status.String(),
+			CanTrade:        req.CanTrade,
+			ReadOnly:        req.ReadOnly,
+			IsDeleted:       req.IsDeleted,
+		}
+
+		err = tx.Investor().CreateInvestor(ctx, investor)
+		if err != nil {
+			msg := "Failed to create Investor"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
+
+		return err
+	})
+
 	return &grpc.CreateInvestorResponse{
-		Code: 0,
-	}, nil
+		UserId:          userId,
+		UserName:        req.UserName,
+		PrimaryTwsId:    req.PrimaryTwsId,
+		ClientCode:      req.ClientCode,
+		BoAccountNumber: req.BoAccountNumber,
+	}, err
 }
 
-func (s *InvestorReceiver) UpdateInvestor(ctx context.Context, req *grpc.UpdateInvestorRequest) (*grpc.UpdateInvestorResponse, error) {
+func (s *OmsUserManagementService) UpdateInvestor(ctx context.Context, req *grpc.UpdateInvestorRequest) (*grpc.UpdateInvestorResponse, error) {
 
-	investor := &model.Investor{
-		ID:              req.Id,
-		UserId:          req.UserId,
-		PrimaryTwsId:    req.PrimaryTwsId,
-		SecondaryTwsId:  req.SecondaryTwsId,
-		BoAccountNumber: req.BoAccountNumber,
-		Status:          req.Status.String(),
-		CanTrade:        req.CanTrade,
-		ReadOnly:        req.ReadOnly,
-		IsEnabled:       req.IsEnabled,
-		IsDeleted:       req.IsDeleted,
-	}
+	var userId int64
+	var err error
+	err = s.db.InTx(ctx, func(ctx context.Context, tx model.Repository) error {
 
-	// Call the database method to create the trader
-	err := s.db.Investor().UpdateInvestor(ctx, investor)
-	if err != nil {
-		msg := "failed to update trader"
-		s.log.Error(ctx, msg, zap.Error(err))
-		return nil, err
-	}
+		investor := &model.Investor{
+			UserId:          req.UserId,
+			PrimaryTwsId:    req.PrimaryTwsId,
+			SecondaryTwsId:  req.SecondaryTwsId,
+			ClientCode:      req.ClientCode,
+			BoAccountNumber: req.BoAccountNumber,
+			Status:          req.Status.String(),
+			CanTrade:        req.CanTrade,
+			ReadOnly:        req.ReadOnly,
+			IsDeleted:       req.IsDeleted,
+		}
 
-	// Return a successful response
+		userId, err = tx.Investor().UpdateInvestor(ctx, investor)
+		if err != nil {
+			msg := "Failed to update Investor"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
+
+		omsUser := &model.User{
+			ID:           userId, // Using user_id from Investor table
+			UserName:     req.UserName,
+			AuthId:       req.AuthId,
+			UserType:     req.UserType.String(),
+			EmailAddress: req.EmailAddress,
+			PhoneNumber:  req.PhoneNumber,
+			CountryCode:  req.CountryCode,
+			CanLogin:     req.CanLogin,
+			Nid:          req.Nid,
+			IsEnabled:    req.IsEnabled,
+			IsVerified:   req.IsVerified,
+		}
+
+		err = tx.User().UpdateInvestor(ctx, omsUser)
+		if err != nil {
+			msg := "Failed to update OMS user"
+			s.log.Error(ctx, msg, zap.Error(err))
+			return err
+		}
+
+		return nil
+	})
+
 	return &grpc.UpdateInvestorResponse{
 		Code: 0,
-	}, nil
+	}, err
 }
 
-func (s *InvestorReceiver) GetInvestorByIdOrEmail(ctx context.Context, req *grpc.GetInvestorByIdOrEmailRequest) (*grpc.GetInvestorByIdOrEmailResponse, error) {
-	// Call the database layer to fetch the trader by ID or email
-
-	investor, err := s.db.Investor().GetInvestorByIdOrEmail(ctx, req)
-
+func (s *OmsUserManagementService) GetInvestorById(ctx context.Context, userId int64) (*grpc.GetInvestorByIdResponse, error) {
+	OmsUserWithInvestorInfo, err := s.db.Investor().GetInvestorById(ctx, userId)
 	if err != nil {
-		msg := "Failed to fetch investor by ID or email"
-		s.log.Error(ctx, msg, zap.Error(err))
-	}
-	return &grpc.GetInvestorByIdOrEmailResponse{
-		Id:              investor.Id,
-		UserId:          investor.UserId,
-		PrimaryTwsId:    investor.PrimaryTwsId,
-		SecondaryTwsId:  investor.SecondaryTwsId,
-		BoAccountNumber: investor.BoAccountNumber,
-		Status:          investor.Status,
-		CanTrade:        investor.CanTrade,
-		ReadOnly:        investor.ReadOnly,
-		IsEnabled:       investor.IsEnabled,
-		IsDeleted:       investor.IsDeleted,
-	}, nil
-}
-
-func (s *InvestorReceiver) GetInvestors(ctx context.Context, req *grpc.GetInvestorsRequest) (*grpc.GetInvestorsResponse, error) {
-
-	res, count, err := s.db.Investor().GetInvestors(ctx, req)
-	if err != nil {
-		msg := "failed to fetch investors"
-		s.log.Error(ctx, msg, zap.Error(err))
+		s.log.Error(ctx, "Failed to get OMS user", zap.Error(err))
 		return nil, err
 	}
 
-	investors := []*grpc.GetInvestorsResponse_Investor{}
-	for _, item := range res {
-		var investorStatus grpc.Status
+	return &grpc.GetInvestorByIdResponse{
+		UserId:          OmsUserWithInvestorInfo.InvestorUserId, // Now accessible
+		UserName:        OmsUserWithInvestorInfo.UserName,
+		EmailAddress:    OmsUserWithInvestorInfo.EmailAddress,
+		PhoneNumber:     OmsUserWithInvestorInfo.PhoneNumber,
+		CountryCode:     OmsUserWithInvestorInfo.CountryCode,
+		PrimaryTwsId:    OmsUserWithInvestorInfo.PrimaryTwsId,
+		ClientCode:      OmsUserWithInvestorInfo.ClientCode,
+		BoAccountNumber: OmsUserWithInvestorInfo.BoAccountNumber,
+	}, err
+}
 
-		if item.Status == "PENDING" {
-			investorStatus = grpc.Status_PENDING
-		} else {
-			investorStatus = grpc.Status_ACTIVE
-		}
+func (s *OmsUserManagementService) GetInvestors(ctx context.Context, page, limit int32) (*grpc.GetInvestorsResponse, error) {
+	var usersWithInvestors []*grpc.UserWithInvestorType
 
-		investor := &grpc.GetInvestorsResponse_Investor{
-			Id:              item.ID,
-			UserId:          item.UserId,
-			PrimaryTwsId:    item.PrimaryTwsId,
-			SecondaryTwsId:  item.SecondaryTwsId,
-			BoAccountNumber: item.BoAccountNumber,
-			Status:          investorStatus,
-			CanTrade:        item.CanTrade,
-			ReadOnly:        item.ReadOnly,
-			IsEnabled:       item.IsEnabled,
-			IsDeleted:       item.IsDeleted,
-		}
-		investors = append(investors, investor)
+	// Fetch investors with pagination
+	results, totalCount, err := s.db.Investor().GetInvestors(ctx, page, limit)
+	if err != nil {
+		s.log.Error(ctx, "Failed to get OMS users with Investors", zap.Error(err))
+		return nil, err
+	}
+
+	// Map database results to gRPC response struct
+	for _, user := range results {
+		usersWithInvestors = append(usersWithInvestors, &grpc.UserWithInvestorType{
+			UserId:          user.InvestorUserId,
+			UserName:        user.UserName,
+			EmailAddress:    user.EmailAddress,
+			PhoneNumber:     user.PhoneNumber,
+			CountryCode:     user.CountryCode,
+			PrimaryTwsId:    user.PrimaryTwsId,
+			ClientCode:      user.ClientCode,
+			BoAccountNumber: user.BoAccountNumber,
+		})
 	}
 
 	return &grpc.GetInvestorsResponse{
-		Investors: investors,
-		PaginationResponse: &grpc.PaginationInfoResponse{
-			TotalRecordCount: int32(count),
-		},
+		Investors:  usersWithInvestors,
+		TotalCount: totalCount,
 	}, nil
-
 }

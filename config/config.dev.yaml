@@ -1,0 +1,17 @@
+# Development environment configuration
+
+time_limit: 3000
+
+# gRPC configurations
+grpc:
+  service_name: oms_user_management
+  network: tcp
+  bind: 0.0.0.0:15071
+  max_recv_msg_size: 4194304
+  max_send_msg_size: 4194304
+  read_buffer_size: 4194304
+  write_buffer_size: 4194304
+
+# Database configuration
+db:
+  url: 'postgresql://root:123456@localhost:54321/oms_user_management?sslmode=disable'

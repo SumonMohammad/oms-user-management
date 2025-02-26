@@ -2,10 +2,10 @@ package server
 
 import (
 	"context"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 )
 
-func (s *GrpctestServer) CreateBrokerAdmin(ctx context.Context, req *grpc.CreateBrokerAdminRequest) (*grpc.CreateBrokerAdminResponse, error) {
+func (s *OmsUserManagementServer) CreateBrokerAdmin(ctx context.Context, req *grpc.CreateBrokerAdminRequest) (*grpc.CreateBrokerAdminResponse, error) {
 	res, err := s.service.BrokerAdmin().CreateBrokerAdmin(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
@@ -15,7 +15,7 @@ func (s *GrpctestServer) CreateBrokerAdmin(ctx context.Context, req *grpc.Create
 	return res, nil
 }
 
-func (s *GrpctestServer) UpdateBrokerAdmin(ctx context.Context, req *grpc.UpdateBrokerAdminRequest) (*grpc.UpdateBrokerAdminResponse, error) {
+func (s *OmsUserManagementServer) UpdateBrokerAdmin(ctx context.Context, req *grpc.UpdateBrokerAdminRequest) (*grpc.UpdateBrokerAdminResponse, error) {
 	res, err := s.service.BrokerAdmin().UpdateBrokerAdmin(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
@@ -25,28 +25,8 @@ func (s *GrpctestServer) UpdateBrokerAdmin(ctx context.Context, req *grpc.Update
 	return res, nil
 }
 
-func (s *GrpctestServer) GetBrokerAdmins(ctx context.Context, req *grpc.GetBrokerAdminsRequest) (*grpc.GetBrokerAdminsResponse, error) {
-	res, err := s.service.BrokerAdmin().GetBrokerAdmins(ctx, req)
-	if err != nil {
-		s.log.Error(ctx, err.Error())
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func (s *GrpctestServer) DeleteBrokerAdmin(ctx context.Context, req *grpc.DeleteBrokerAdminRequest) (*grpc.DeleteBrokerAdminResponse, error) {
-	res, err := s.service.BrokerAdmin().DeleteBrokerAdmin(ctx, req)
-	if err != nil {
-		s.log.Error(ctx, err.Error())
-		return nil, err
-	}
-
-	return res, nil
-}
-
-func (s *GrpctestServer) GetBrokerAdminByIdOrUserName(ctx context.Context, req *grpc.GetBrokerAdminByIdOrUserNameRequest) (*grpc.GetBrokerAdminByIdOrUserNameResponse, error) {
-	res, err := s.service.BrokerAdmin().GetBrokerAdminByIdOrUserName(ctx, req)
+func (s *OmsUserManagementServer) GetBrokerAdminById(ctx context.Context, req *grpc.GetBrokerAdminByIdRequest) (*grpc.GetBrokerAdminByIdResponse, error) {
+	res, err := s.service.BrokerAdmin().GetBrokerAdminById(ctx, req.UserId)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err

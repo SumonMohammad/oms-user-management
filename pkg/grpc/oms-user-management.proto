@@ -1,0 +1,1651 @@
+syntax = "proto3";
+
+package oms_user_management;
+
+option go_package = "gitlab.techetronventures.com/core/oms-user-management/pkg/grpc;grpc";
+
+import "google/protobuf/empty.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+
+
+
+
+service OmsUserManagement {
+  // Health check method
+  rpc HealthCheck (google.protobuf.Empty) returns (HealthCheckResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/health-check"
+      body: "*"
+    };
+  }
+
+
+  //Mapping TWS with Trader
+  rpc CreateTraderTws (CreateTraderTwsMapRequest) returns (CreateTraderTwsMapResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/trader-tws"
+      body: "*"
+    };
+  }
+
+  rpc GetTradersTws (GetTradersTwsMapRequest) returns (GetTradersTwsMapResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-trader-tws"
+    };
+  }
+
+  rpc UpdateTraderTws (UpdateTraderTwsMapRequest) returns (UpdateTraderTwsMapResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-trader-tws"
+      body: "*"
+    };
+  }
+
+  rpc DeleteTraderTws (DeleteTraderTwsMapRequest) returns (DeleteTraderTwsMapResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-trader-tws"
+    };
+  }
+
+  //Team API
+  rpc CreateTeam (CreateTraderTeamRequest) returns (CreateTraderTeamResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/team"
+      body: "*"
+    };
+  }
+
+  rpc UpdateTeam (UpdateTraderTeamRequest) returns (UpdateTraderTeamResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-team"
+      body: "*"
+    };
+  }
+  rpc GetTeams (GetTraderTeamRequest) returns (GetTraderTeamResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-teams"
+    };
+  }
+
+  rpc DeleteTeam (DeleteTraderTeamRequest) returns (DeleteTraderTeamResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-team"
+    };
+  }
+
+  //Mapping trader with team Creation
+  rpc CreateMapTeam (CreateTraderMapRequest) returns (CreateTraderMapResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/map-trader-team"
+      body: "*"
+    };
+  }
+
+  rpc UpdateMapTeam (UpdateTraderMapRequest) returns (UpdateTraderMapResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-map-trader-team"
+      body: "*"
+    };
+  }
+
+  rpc GetMappedTeams (GetTraderMapRequest) returns (GetTraderMapResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-map-trader-team"
+    };
+  }
+
+  rpc DeleteMappedTeam (DeleteTraderMapRequest) returns (DeleteTraderMapResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-map-trader-team"
+    };
+  }
+
+  // TWS API"S
+
+
+  rpc CreateTws (CreateTwsRequest) returns (CreateTwsResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/tws"
+      body: "*"
+    };
+  }
+
+  rpc UpdateTws (UpdateTwsRequest) returns (UpdateTwsResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-tws"
+      body: "*"
+    };
+  }
+
+  rpc GetTws (GetTwsRequest) returns (GetTwsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-tws"
+    };
+  }
+
+  rpc DeleteTws (DeleteTwsRequest) returns (DeleteTwsResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-tws"
+    };
+  }
+  
+  //Audit logs API's
+  rpc CreateAuditLog (CreateAuditLogRequest) returns (CreateAuditLogResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/audit-log"
+      body: "*"
+    };
+  }
+
+  rpc GetAuditLogs (GetAuditLogsRequest) returns (GetAuditLogsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-audit-logs"
+    };
+  }
+
+  rpc GetAuditLogById (GetAuditLogByIdRequest) returns (GetAuditLogByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-audit-log"
+    };
+  }
+//Roles api
+
+  rpc CreateRole (CreateRoleRequest) returns (CreateRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/role"
+      body: "*"
+    };
+  }
+
+  rpc UpdateRole (UpdateRoleRequest) returns (UpdateRoleResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-role"
+      body: "*"
+    };
+  }
+
+  rpc GetRoles (GetRolesRequest) returns (GetRolesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-role"
+    };
+  }
+
+  rpc GetRoleById (GetRoleByIdRequest) returns (GetRoleByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/grpctest/role"
+      additional_bindings {
+        get: "/api/v1/oms-user-management/role/{id}"
+      }
+    };
+  }
+
+  rpc DeleteRole (DeleteRoleRequest) returns (DeleteRoleResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-role"
+
+    };
+  }
+
+
+
+
+
+
+
+  //Permissions API's
+
+
+
+  rpc CreatePermission (CreatePermissionRequest) returns (CreatePermissionResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/Permission"
+      body: "*"
+    };
+  }
+
+  rpc UpdatePermission (UpdatePermissionRequest) returns (UpdatePermissionResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-Permission"
+      body: "*"
+    };
+  }
+
+  rpc GetPermissions (GetPermissionsRequest) returns (GetPermissionsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-permission"
+    };
+  }
+
+  rpc GetPermissionById (GetPermissionByIdRequest) returns (GetPermissionByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/permission"
+      additional_bindings {
+        get: "/api/v1/oms-user-management/permission/{id}"
+      }
+    };
+  }
+
+  rpc DeletePermission (DeletePermissionRequest) returns (DeletePermissionResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-Permission"
+
+    };
+  }
+
+
+
+  //Map User Permission
+
+
+  rpc CreateMapUserPermission (CreateMapUserPermissionRequest) returns (CreateMapUserPermissionResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/map-user-permission"
+      body: "*"
+    };
+  }
+
+  rpc UpdateMapUserPermission (UpdateMapUserPermissionRequest) returns (UpdateMapUserPermissionResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-map-user-permission"
+      body: "*"
+    };
+  }
+
+
+  rpc GetUserPermissionsByUserId (GetUserPermissionsByUserIdRequest) returns (GetUserPermissionsByUserIdResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/map-user-permissions"
+      additional_bindings {
+        get: "/api/v1/oms-user-management/map-user-permissions/{user_id}"
+      }
+    };
+  }
+
+  rpc DeleteMapUserPermission (DeleteMapUserPermissionRequest) returns (DeleteMapUserPermissionResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-map-user-permission"
+    };
+  }
+
+
+  //Map user role API's
+
+
+  rpc CreateMapUserRole (CreateMapUserRoleRequest) returns (CreateMapUserRoleResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/map-user-role"
+      body: "*"
+    };
+  }
+
+  rpc UpdateMapUserRole (UpdateMapUserRoleRequest) returns (UpdateMapUserRoleResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-map-user-role"
+      body: "*"
+    };
+  }
+
+  rpc GetMapUserRoles (GetMapUserRolesRequest) returns (GetMapUserRolesResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-map-user-role"
+    };
+  }
+
+  rpc GetMapUserRoleById (GetMapUserRoleByIdRequest) returns (GetMapUserRoleByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/map-user-role"
+      additional_bindings {
+        get: "/api/v1/oms-user-management/map-user-role/{id}"
+      }
+    };
+  }
+
+  rpc DeleteMapUserRole (DeleteMapUserRoleRequest) returns (DeleteMapUserRoleResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-map-user-role"
+
+    };
+  }
+
+
+
+  //Permission Role maping API's
+
+
+
+  rpc CreateMapRolePermission (CreateMapRolePermissionRequest) returns (CreateMapRolePermissionResponse) {
+    option (google.api.http) = {
+      post: "/api/v1/oms-user-management/map-role-permission"
+      body: "*"
+    };
+  }
+
+  rpc UpdateMapRolePermission (UpdateMapRolePermissionRequest) returns (UpdateMapRolePermissionResponse) {
+    option (google.api.http) = {
+      put: "/api/v1/oms-user-management/update-map-role-permission"
+      body: "*"
+    };
+  }
+
+  rpc GetMapRolePermissions (GetMapRolePermissionsRequest) returns (GetMapRolePermissionsResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/get-map-role-permission"
+    };
+  }
+
+  rpc GetMapRolePermissionById (GetMapRolePermissionByIdRequest) returns (GetMapRolePermissionByIdResponse) {
+    option (google.api.http) = {
+      get: "/api/v1/oms-user-management/map-role-permission"
+      additional_bindings {
+        get: "/api/v1/oms-user-management/map-role-permission/{role_id}"
+      }
+    };
+  }
+
+  rpc DeleteMapRolePermission (DeleteMapRolePermissionRequest) returns (DeleteMapRolePermissionResponse) {
+    option (google.api.http) = {
+      delete: "/api/v1/oms-user-management/delete-map-role-Permission"
+
+    };
+  }
+
+  //INVESTORS API
+  rpc CreateInvestor (CreateInvestorRequest) returns (CreateInvestorResponse);
+  rpc UpdateInvestor (UpdateInvestorRequest) returns (UpdateInvestorResponse);
+  rpc GetInvestorById (GetInvestorByIdRequest) returns (GetInvestorByIdResponse);
+  rpc GetInvestors(GetInvestorsRequest) returns (GetInvestorsResponse);
+
+
+  //Traders API
+  rpc CreateTrader (CreateTraderRequest) returns (CreateTraderResponse);
+  rpc UpdateTrader (UpdateTraderRequest) returns (UpdateTraderResponse);
+  rpc GetTraderById (GetTraderByIdRequest) returns (GetTraderByIdResponse);
+
+
+
+  //Broker Admins API
+  rpc CreateBrokerAdmin (CreateBrokerAdminRequest) returns (CreateBrokerAdminResponse);
+  rpc UpdateBrokerAdmin (UpdateBrokerAdminRequest) returns (UpdateBrokerAdminResponse);
+  rpc GetBrokerAdminById (GetBrokerAdminByIdRequest) returns (GetBrokerAdminByIdResponse);
+
+
+
+  //Employee API's
+  rpc CreateEmployee (CreateEmployeeRequest) returns (CreateEmployeeResponse);
+  rpc UpdateEmployee (UpdateEmployeeRequest) returns (UpdateEmployeeResponse);
+  rpc GetEmployeeById (GetEmployeeByIdRequest) returns (GetEmployeeByIdResponse);
+
+
+  //Branch API's
+  rpc CreateBranch (CreateBranchRequest) returns (CreateBranchResponse);
+  rpc UpdateBranch (UpdateBranchRequest) returns (UpdateBranchResponse);
+  rpc GetBranchById (GetBranchByIdRequest) returns (GetBranchByIdResponse);
+  rpc GetBranches (GetBranchesRequest) returns (GetBranchesResponse);
+  rpc DeleteBranch (DeleteBranchRequest) returns (DeleteBranchResponse);
+
+
+  //Broker Houses API's
+  rpc CreateBrokerHouse (CreateBrokerHouseRequest) returns (CreateBrokerHouseResponse);
+  rpc UpdateBrokerHouse (UpdateBrokerHouseRequest) returns (UpdateBrokerHouseResponse);
+  rpc GetBrokerHouseById (GetBrokerHouseByIdRequest) returns (GetBrokerHouseByIdResponse);
+  rpc GetBrokerHouses (GetBrokerHousesRequest) returns (GetBrokerHousesResponse);
+  rpc DeleteBrokerHouse (DeleteBrokerHouseRequest) returns (DeleteBrokerHouseResponse);
+
+}
+
+
+
+// Message declaration for Employee table
+
+message CreateEmployeeRequest{
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  Status status = 12;
+  int64 branch_id = 13;
+  string designation = 14;
+  string description = 15;
+
+}
+
+
+message CreateEmployeeResponse{
+  int64 code = 1;
+}
+
+message UpdateEmployeeRequest{
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  Status status = 12;
+  int64 branch_id = 13;
+  string designation = 14;
+  string description = 15;
+}
+
+message UpdateEmployeeResponse{
+  int64 code = 1;
+}
+
+
+
+
+message GetEmployeeByIdRequest {
+  int64 user_id = 1;
+}
+
+message GetEmployeeByIdResponse {
+  int64  user_id = 1;
+  string user_name = 2;
+  userType user_type = 3;
+  string email_address = 4;
+  string phone_number = 5;
+  string country_code = 6;
+  int64 branch_id = 7;
+  string designation = 8;
+
+}
+
+
+
+
+
+message CreateBrokerAdminRequest{
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  Status status = 12;
+  int64 branch_id = 13;
+  bool is_active = 14;
+  bool read_only = 15;
+  bool is_isolated_user = 16;
+  bool   can_trade = 17;
+  bool   is_deleted = 18;
+
+}
+
+message CreateBrokerAdminResponse{
+  int64 code = 1;
+}
+
+
+
+message UpdateBrokerAdminRequest{
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  Status status = 12;
+  int64 branch_id = 13;
+  bool is_active = 14;
+  bool read_only = 15;
+  bool is_isolated_user = 16;
+  bool   can_trade = 17;
+  bool   is_deleted = 18;
+}
+
+message UpdateBrokerAdminResponse{
+  int64 code = 1;
+}
+
+message GetBrokerAdminByIdRequest {
+  int64  user_id = 1;
+
+}
+
+message GetBrokerAdminByIdResponse {
+  int64  user_id = 1;
+  string user_name = 2;
+  string email_address = 3;
+  string phone_number = 4;
+  string country_code = 5;
+  int64  branch_id = 6;
+  bool   read_only = 7;
+  bool   can_trade = 8;
+  bool   is_active = 9;
+  bool   is_isolated_user = 10;
+  bool   is_deleted = 11;
+
+}
+
+message DeleteBrokerAdminRequest{
+  int64 id = 1;
+}
+
+message DeleteBrokerAdminResponse{
+  int64 code = 1;
+}
+
+
+message CreateTraderRequest {
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  Status status = 12;
+  int64 branch_id = 13;
+  bool is_active = 14;
+  bool read_only = 15;
+  string licence_number = 16;
+  bool   can_trade = 17;
+  bool   is_deleted = 18;
+}
+
+// Response after successful creation
+message CreateTraderResponse {
+ int64 code = 1;
+}
+
+
+
+message UpdateTraderRequest {
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  Status status = 12;
+  int64 branch_id = 13;
+  bool is_active = 14;
+  bool read_only = 15;
+  string licence_number = 16;
+  bool   can_trade = 17;
+  bool   is_deleted = 18;
+}
+
+// Response after successful creation
+message UpdateTraderResponse {
+  int64 code = 1;
+}
+
+
+message GetTraderByIdRequest {
+  int64 user_id = 1;
+}
+
+// Response message
+message GetTraderByIdResponse {
+  int64  user_id = 1;
+  string user_name = 2;
+  string email_address = 3;
+  string phone_number = 4;
+  string country_code = 5;
+  int64 branch_id = 6;
+  bool read_only = 7;
+  string licence_number = 8;
+  bool can_trade = 9;
+  bool is_active = 10;
+}
+
+
+
+//When Investor created data inserted into two table "oms_user" and "investors"
+
+
+message GetInvestorsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+message UserWithInvestorType {
+  int64 user_id = 1;
+  string user_name = 2;
+  string email_address = 3;
+  string phone_number = 4;
+  string country_code = 5;
+  int64 primary_tws_id = 6;
+  string client_code = 7;
+  string bo_account_number = 8;
+}
+
+message GetInvestorsResponse {
+  repeated UserWithInvestorType investors = 1;
+  int64 total_count = 2;
+}
+
+
+message GetInvestorByIdRequest {
+  int64 user_id = 1;
+}
+
+// Response message
+message GetInvestorByIdResponse {
+  int64 user_id = 1;
+  string user_name = 2;
+  string email_address = 3;
+  string phone_number = 4;
+  string country_code = 5;
+  int64 primary_tws_id = 6;
+  string client_code = 7;
+  string bo_account_number = 8;
+}
+
+message UpdateInvestorRequest {
+  //  User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  int64 primary_tws_id = 12;
+  int64 secondary_tws_id = 13;
+  string bo_account_number = 14;
+  Status status = 15;
+  bool read_only = 16;
+  bool   can_trade = 17;
+  bool   is_deleted = 18;
+  string client_code = 19;
+}
+
+message UpdateInvestorResponse {
+  int64 code = 1;
+}
+
+
+
+message CreateInvestorRequest {
+  // OMS User fields
+  string user_name = 1;
+  int64 auth_id = 2;
+  userType user_type = 3;
+  bool can_login = 4;
+  string nid = 5;
+  bool is_verified = 6;
+  bool is_enabled = 7; // Active, Inactive, etc.
+  string email_address = 8;
+  string phone_number = 9;
+  string country_code = 10;
+
+  // Investor fields
+  int64 user_id = 11;
+  int64 primary_tws_id = 12;
+  int64 secondary_tws_id = 13;
+  string bo_account_number = 14;
+  Status status = 15;
+  bool read_only = 16;
+  bool   can_trade = 17;
+  bool   is_deleted = 18;
+  string client_code = 19;
+}
+
+// Response after successful creation
+message CreateInvestorResponse {
+  int64 user_id = 1;
+  string user_name = 3;
+  int64 primary_tws_id = 4;
+  string client_code = 5;
+  string bo_account_number = 6;
+}
+
+
+
+message CreateMapRolePermissionRequest{
+  int64 role_id = 1;
+  int64 permission_id = 2;
+  bool is_enabled = 3;
+
+}
+
+message CreateMapRolePermissionResponse{
+  int64 code = 1;
+}
+
+
+message UpdateMapRolePermissionRequest{
+  int64 role_id = 1;
+  int64 permission_id = 2;
+  bool is_enabled = 3;
+  int64 id = 4;
+
+}
+
+message UpdateMapRolePermissionResponse{
+  int64 code = 1;
+}
+
+message GetMapRolePermissionsRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+message GetMapRolePermissionsResponse{
+  message mappedRoleList{
+    int64 role_id = 1;
+    int64 permission_id = 2;
+    bool is_enabled = 3;
+    int64 id = 4;
+  }
+  int64 code = 1;
+  repeated mappedRoleList mappedPermissionRoles = 2;
+  PaginationInfoResponse pagination_response = 3;
+}
+
+
+
+message GetMapRolePermissionByIdRequest{
+  int64 role_id = 1;
+}
+
+message GetMapRolePermissionByIdResponse {
+  repeated RolesAndPermissions rolesAndPermissions = 1;
+  int32 code = 2;
+}
+
+message RolesAndPermissions {
+  int64 roleId = 1;
+  int64 permissionId = 2;
+  string name = 3;
+  bool isEnabled = 4;
+}
+
+message DeleteMapRolePermissionRequest{
+  int64 id = 1;
+}
+
+message DeleteMapRolePermissionResponse{
+  int64 code = 1;
+}
+
+
+//MapUserRole
+message CreateMapUserRoleRequest{
+  int64 user_id = 1;
+  int64 role_id = 2;
+  bool  is_enabled = 3;
+
+}
+
+message CreateMapUserRoleResponse{
+  int64 code = 1;
+}
+
+
+message UpdateMapUserRoleRequest{
+  int64 user_id = 1;
+  int64 role_id = 2;
+  bool  is_enabled = 3;
+  int64 id = 4;
+
+}
+
+message UpdateMapUserRoleResponse{
+  int64 code = 1;
+}
+
+message GetMapUserRolesRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+message GetMapUserRolesResponse{
+  message mappedUserRoleList{
+    int64 user_id = 1;
+    int64 role_id = 2;
+    bool  is_enabled = 3;
+    int64 id = 4;
+  }
+  int64 code = 1;
+  repeated mappedUserRoleList mappedUserRoleLists = 2;
+  PaginationInfoResponse pagination_response = 3;
+}
+
+
+
+message GetMapUserRoleByIdRequest{
+  int64 id = 1;
+}
+
+message GetMapUserRoleByIdResponse{
+  int64 user_id = 1;
+  int64 role_id = 2;
+  bool  is_enabled = 3;
+  int64 id = 4;
+}
+
+message DeleteMapUserRoleRequest{
+  int64 id = 1;
+}
+
+message DeleteMapUserRoleResponse{
+  int64 code = 1;
+}
+
+
+//MapUserPermission
+
+message CreateMapUserPermissionRequest{
+  int64 user_id = 1;
+  int64 permission_id = 2;
+  bool  is_enabled = 3;
+  bool  is_revoked = 4;
+}
+
+message CreateMapUserPermissionResponse{
+  int64 code = 1;
+}
+
+
+
+message UpdateMapUserPermissionRequest{
+  int64 user_id = 1;
+  int64 permission_id = 2;
+  bool  is_enabled = 3;
+  bool  is_revoked = 4;
+}
+
+message UpdateMapUserPermissionResponse{
+  int64 code = 1;
+}
+
+
+message GetUserPermissionsByUserIdRequest{
+  int64 user_id = 1;
+}
+
+message GetUserPermissionsByUserIdResponse{
+  message UserPermissions{
+    int64 permission_id = 1;
+    string name = 2;
+  }
+  int64 code = 1;
+  repeated UserPermissions userPermissions = 2;
+}
+
+
+
+message DeleteMapUserPermissionRequest{
+  int64 user_id = 1;
+  int64 permission_id = 2;
+}
+
+message DeleteMapUserPermissionResponse{
+  int64 code = 1;
+}
+
+
+
+
+enum PermissionType{
+  UNSPECIFIED_Permission = 0;
+}
+
+//Roles API
+message CreateRoleRequest{
+  string role_name = 1;
+  string description = 2;
+  bool   is_enabled = 3;
+
+}
+
+message CreateRoleResponse{
+  int64 code = 1;
+}
+
+message UpdateRoleRequest{
+  string role_name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+  int64 id = 4;
+}
+
+message UpdateRoleResponse{
+  int64 code = 1;
+}
+
+
+message GetRolesRequest{
+  PaginationInfoRequest pagination_request = 1;
+
+}
+
+message GetRolesResponse{
+  message RoleList{
+    string role_name = 1;
+    string description = 2;
+    bool is_enabled = 3;
+    int64 id = 4;
+  }
+  int64 code = 1;
+  repeated RoleList Roles = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+message GetRoleByIdRequest{
+  int64 id = 1;
+}
+
+message GetRoleByIdResponse{
+  string role_name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+  int64 id = 4;
+
+}
+
+message DeleteRoleRequest{
+  int64 id = 1;
+}
+message DeleteRoleResponse{
+  int64 code = 1;
+}
+
+
+
+//Permission API
+message CreatePermissionRequest{
+  string name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+
+}
+
+message CreatePermissionResponse{
+  int64 code = 1;
+}
+
+message UpdatePermissionRequest{
+  string name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+  int64 id = 4;
+}
+
+message UpdatePermissionResponse{
+  int64 code = 1;
+}
+
+
+message GetPermissionsRequest{
+  PaginationInfoRequest pagination_request = 1;
+
+}
+
+message GetPermissionsResponse{
+  message PermissionList{
+    string name = 1;
+    string description = 2;
+    bool is_enabled = 3;
+    int64 id = 4;
+  }
+  int64 code = 1;
+  repeated PermissionList Permissions = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+message GetPermissionByIdRequest{
+  int64 id = 1;
+}
+
+message GetPermissionByIdResponse{
+  string name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+  int64 id = 4;
+
+}
+
+message DeletePermissionRequest{
+  int64 id = 1;
+}
+message DeletePermissionResponse{
+  int64 code = 1;
+}
+
+
+enum HTTPMethods {
+  GET = 0;
+  POST = 1;
+  PUT = 2;
+  DELETE = 3;
+  OPTIONS = 4;
+  CONNECT = 5;
+  HEAD = 6;
+  TRACE = 7;
+}
+
+enum actionType{
+  UNSPECIFIED = 0;
+  LOGIN = 1;
+  LOGOUT = 2;
+  CHANGE_PASSWORD = 3;
+  ORDER = 4;
+  DEPOSIT = 5;
+  WITHDRAW = 6;
+}
+
+message CreateAuditLogRequest{
+  actionType action_type = 1;
+  int64 attempt_by_id = 2;
+  userType attempt_by_type = 3;
+  string ip_address = 4;
+  HTTPMethods http_method = 5;
+  string endpoint = 6;
+  bool is_success = 7;
+  string platform = 8;
+  string device_name = 9;
+  string device_type = 10;
+  google.protobuf.Struct description = 11; // JSON field for action description
+  google.protobuf.Struct request_body = 12; // JSON field for the request body
+  google.protobuf.Struct response_body = 13; // JSON field for the response body
+}
+
+message CreateAuditLogResponse{
+  int64 code = 1;
+}
+message GetAuditLogsRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+message GetAuditLogsResponse{
+  message auditLogList {
+    actionType action_type = 1;
+    int64 attempt_by_id = 2;
+    userType attempt_by_type = 3;
+    string ip_address = 4;
+    HTTPMethods http_method = 5;
+    string endpoint = 6;
+    bool is_success = 7;
+    string platform = 8;
+    string device_name = 9;
+    string device_type = 10;
+    google.protobuf.Struct description = 11; // JSON field for action description
+    google.protobuf.Struct request_body = 12; // JSON field for the request body
+    google.protobuf.Struct response_body = 13; // JSON field for the response body
+    int64 id = 14;
+  }
+
+  int64 code = 1;
+  repeated auditLogList auditLogs = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+message GetAuditLogByIdRequest{
+  int64 id = 1;
+}
+
+message GetAuditLogByIdResponse{
+  actionType action_type = 1;
+  int64 attempt_by_id = 2;
+  userType attempt_by_type = 3;
+  string ip_address = 4;
+  HTTPMethods http_method = 5;
+  string endpoint = 6;
+  bool is_success = 7;
+  string platform = 8;
+  string device_name = 9;
+  string device_type = 10;
+  google.protobuf.Struct description = 11; // JSON field for action description
+  google.protobuf.Struct request_body = 12; // JSON field for the request body
+  google.protobuf.Struct response_body = 13; // JSON field for the response body
+  int64 id = 14;
+
+}
+//Branch Related Message
+
+message CreateBranchRequest{
+  string branch_name = 1;
+  string short_name = 2;
+  string description = 3;
+  string address = 4;
+  string phone_number = 5;
+  string telephone_number = 6;
+  string email_address = 7;
+  string valid_currency = 8;
+  string status = 9;
+  string country_code = 10;
+  bool is_enabled = 11;
+  bool is_active = 12;
+  int64 broker_house_id = 13;
+  string branch_type = 14;
+}
+
+message CreateBranchResponse{
+  int64 code = 1;
+}
+
+
+message UpdateBranchRequest{
+  string branch_name = 1;
+  string short_name = 2;
+  string description = 3;
+  string address = 4;
+  string phone_number = 5;
+  string telephone_number = 6;
+  string email_address = 7;
+  string valid_currency = 8;
+  string status = 9;
+  string country_code = 10;
+  bool is_enabled = 11;
+  bool is_active = 12;
+  int64 broker_house_id = 13;
+  string branch_type = 14;
+  int64 id = 15;
+}
+
+message UpdateBranchResponse{
+  int64 code = 1;
+}
+
+
+message GetBranchesRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+
+
+message GetBranchesResponse{
+  message branchList{
+    string branch_name = 1;
+    string short_name = 2;
+    string description = 3;
+    string address = 4;
+    string phone_number = 5;
+    string telephone_number = 6;
+    string email_address = 7;
+    string valid_currency = 8;
+    string status = 9;
+    string country_code = 10;
+    bool is_enabled = 11;
+    bool is_active = 12;
+    int64 broker_house_id = 13;
+    string branch_type = 14;
+    int64 id = 15;
+
+  }
+  int64 code = 1;
+  repeated branchList branches = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+
+message GetBranchByIdRequest {
+  int64 id = 1;
+}
+
+message GetBranchByIdResponse {
+  string branch_name = 1;
+  string short_name = 2;
+  string description = 3;
+  string address = 4;
+  string phone_number = 5;
+  string telephone_number = 6;
+  string email_address = 7;
+  string valid_currency = 8;
+  string status = 9;
+  string country_code = 10;
+  bool is_enabled = 11;
+  bool is_active = 12;
+  int64 broker_house_id = 13;
+  string branch_type = 14;
+  int64 id = 15;
+
+}
+
+
+message DeleteBranchRequest{
+  int64 id = 1;
+}
+
+message DeleteBranchResponse{
+  int64 code = 1;
+}
+
+
+//Broker House Related Message
+
+message CreateBrokerHouseRequest{
+  string broker_house_name = 1;
+  string short_name = 2;
+  string description = 3;
+  string address = 4;
+  string phone_number = 5;
+  string telephone_number = 6;
+  string email_address = 7;
+  string valid_currency = 8;
+  string status = 9;
+  string country_code = 10;
+  bool is_enabled = 11;
+}
+
+message CreateBrokerHouseResponse{
+  int64 code = 1;
+}
+
+
+message UpdateBrokerHouseRequest{
+  string broker_house_name = 1;
+  string short_name = 2;
+  string description = 3;
+  string address = 4;
+  string phone_number = 5;
+  string telephone_number = 6;
+  string email_address = 7;
+  string valid_currency = 8;
+  string status = 9;
+  string country_code = 10;
+  bool is_enabled = 11;
+  int64 id = 12;
+}
+
+message UpdateBrokerHouseResponse{
+  int64 code = 1;
+}
+
+
+message GetBrokerHousesRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+
+
+message GetBrokerHousesResponse{
+  message brokerHouseList{
+    string broker_house_name = 1;
+    string short_name = 2;
+    string description = 3;
+    string address = 4;
+    string phone_number = 5;
+    string telephone_number = 6;
+    string email_address = 7;
+    string valid_currency = 8;
+    string status = 9;
+    string country_code = 10;
+    bool is_enabled = 11;
+    int64 id = 12;
+
+  }
+  int64 code = 1;
+  repeated brokerHouseList brokerHouses = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+
+message GetBrokerHouseByIdRequest {
+ int64 id = 1;
+}
+
+message GetBrokerHouseByIdResponse {
+  string broker_house_name = 1;
+  string short_name = 2;
+  string description = 3;
+  string address = 4;
+  string phone_number = 5;
+  string telephone_number = 6;
+  string email_address = 7;
+  string valid_currency = 8;
+  string status = 9;
+  string country_code = 10;
+  bool is_enabled = 11;
+  int64 id = 12;
+
+}
+
+
+message DeleteBrokerHouseRequest{
+  int64 id = 1;
+}
+
+message DeleteBrokerHouseResponse{
+  int64 code = 1;
+}
+
+
+// Mapping Trader with Team
+message CreateTraderMapRequest{
+  int64 team_id = 1;
+  int64 trader_id = 2;
+  bool is_enabled = 3;
+  Status status = 4;
+}
+
+message CreateTraderMapResponse{
+  int64 code = 1;
+}
+
+message UpdateTraderMapRequest{
+  int64 team_id = 1;
+  int64 trader_id = 2;
+  bool is_enabled = 3;
+  Status status = 4;
+  int64 id = 5;
+}
+
+message UpdateTraderMapResponse{
+  int64 code = 1;
+}
+
+message GetTraderMapRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+message GetTraderMapResponse{
+  message TraderMap{
+    int64 team_id = 1;
+    int64 trader_id = 2;
+    bool is_enabled = 3;
+    Status status = 4;
+    int64 id = 5;
+  }
+  int64 code = 1;
+  repeated TraderMap MappedTrader = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+message DeleteTraderMapRequest{
+  int64 id = 1;
+}
+
+message DeleteTraderMapResponse{
+  int64 code = 1;
+}
+
+
+
+//Create team of trader
+message CreateTraderTeamRequest{
+  string name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+  Status status = 4;
+  bool is_deleted = 5;
+}
+
+
+message CreateTraderTeamResponse{
+  int64 code = 1;
+}
+
+message UpdateTraderTeamRequest{
+  string name = 1;
+  string description = 2;
+  bool is_enabled = 3;
+  Status status = 4;
+  bool is_deleted = 5;
+  int64 id = 6;
+}
+
+
+message UpdateTraderTeamResponse{
+  int64 code = 1;
+}
+
+message GetTraderTeamRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+message GetTraderTeamResponse{
+  message TraderTeam{
+    string name = 1;
+    string description = 2;
+    bool is_enabled = 3;
+    Status status = 4;
+    bool is_deleted = 5;
+    int64 id = 6;
+  }
+  int64 code = 1;
+  repeated TraderTeam TradersTeam = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+message DeleteTraderTeamRequest{
+  int64 id = 1;
+}
+
+message DeleteTraderTeamResponse{
+  int64 code = 1;
+}
+
+// Response for health check
+message HealthCheckResponse {
+  string status = 1;
+}
+
+message PaginationInfoRequest {
+  int32 page_token = 1;
+  int32 page_size = 2;
+}
+
+message PaginationInfoResponse {
+  int32 self_page_token = 1;
+  int32 first_page_token = 2;
+  int32 next_page_token = 3;
+  int32 previous_page_token = 4;
+  int32 total_page_count = 5;
+  int32 total_record_count = 6;
+}
+
+enum Status {
+  PENDING = 0;
+  ACTIVE = 1;
+}
+
+//TraderTws table
+
+
+enum TwsStatus {
+  ASSIGNED = 0;
+  UNASSIGNED = 1;
+}
+
+
+message CreateTraderTwsMapRequest {
+  int64 tws_id = 1;
+  int64  trader_id = 2;
+  TwsStatus status = 3;
+  bool is_enabled = 4;
+  bool is_deleted = 5;
+}
+
+message CreateTraderTwsMapResponse {
+  int64 code = 1;
+}
+
+
+message UpdateTraderTwsMapRequest{
+  int64 tws_id = 1;
+  int64  trader_id = 2;
+  TwsStatus status = 3;
+  bool is_enabled = 4;
+  bool is_deleted = 5;
+  int64 id = 6;
+}
+
+message UpdateTraderTwsMapResponse {
+  int64 code = 1;
+}
+
+
+message GetTradersTwsMapRequest {
+  PaginationInfoRequest pagination_request = 1;
+}
+
+message GetTradersTwsMapResponse {
+  message TraderTws{
+    int64 tws_id = 1;
+    int64  trader_id = 2;
+    TwsStatus status = 3;
+    bool is_enabled = 4;
+    bool is_deleted = 5;
+    int64 id = 6;
+
+  }
+  int64 code = 1;
+  repeated TraderTws tradersTws = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+
+message DeleteTraderTwsMapRequest{
+  int64 id = 1;
+}
+
+message DeleteTraderTwsMapResponse{
+  int64 code = 1;
+
+}
+
+
+//TraderGroup creation
+enum TradeRole {
+  TRADE = 0;
+  VIEW = 1;
+}
+
+//TWS Creation
+message CreateTwsRequest{
+  string tws_code = 1;
+  bool is_enabled = 2;
+  TwsStatus status = 3;
+  bool is_active = 4;
+  bool is_deleted = 5;
+}
+message CreateTwsResponse{
+  int64 code = 1;
+}
+
+message UpdateTwsRequest{
+  int64 id = 1;
+  string tws_code = 2;
+  bool is_enabled = 3;
+  TwsStatus status = 4;
+  bool is_active = 5;
+  bool is_deleted = 6;
+
+
+}
+
+message UpdateTwsResponse{
+  int64 code = 1;
+}
+
+message GetTwsRequest{
+  PaginationInfoRequest pagination_request = 1;
+}
+
+
+message GetTwsResponse{
+  message twsList{
+    int64 id = 1;
+    string tws_code = 2;
+    bool is_enabled = 3;
+    TwsStatus status = 4;
+    bool is_active = 5;
+    bool is_deleted = 6;
+
+  }
+  int64 code = 1;
+  repeated twsList tws = 2;
+  PaginationInfoResponse pagination_response = 3;
+
+}
+
+
+
+message DeleteTwsRequest{
+  int64 id = 1;
+}
+
+message DeleteTwsResponse{
+  int64 code = 1;
+}
+
+
+
+//OMS Users
+enum userType {
+  USER_TYPE_UNSPECIFIED = 0; // Default value, unspecified
+  INVESTOR = 1;                   // Represents an investor
+  TRADER = 2;                     // Represents a trader
+  BROKER_ADMIN = 3;               // Represents a broker admin
+  EMPLOYEE = 4;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

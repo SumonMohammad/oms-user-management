@@ -5,8 +5,8 @@ import (
 	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 )
 
-func (s *OmsUserManagementServer) CreateOffice(ctx context.Context, req *grpc.CreateOfficeRequest) (*grpc.CreateOfficeResponse, error) {
-	res, err := s.service.Office().CreateOffice(ctx, req)
+func (s *OmsUserManagementServer) CreateBrokerHouse(ctx context.Context, req *grpc.CreateBrokerHouseRequest) (*grpc.CreateBrokerHouseResponse, error) {
+	res, err := s.service.BrokerHouse().CreateBrokerHouse(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -15,8 +15,8 @@ func (s *OmsUserManagementServer) CreateOffice(ctx context.Context, req *grpc.Cr
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) UpdateOffice(ctx context.Context, req *grpc.UpdateOfficeRequest) (*grpc.UpdateOfficeResponse, error) {
-	res, err := s.service.Office().UpdateOffice(ctx, req)
+func (s *OmsUserManagementServer) UpdateBrokerHouse(ctx context.Context, req *grpc.UpdateBrokerHouseRequest) (*grpc.UpdateBrokerHouseResponse, error) {
+	res, err := s.service.BrokerHouse().UpdateBrokerHouse(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -25,8 +25,8 @@ func (s *OmsUserManagementServer) UpdateOffice(ctx context.Context, req *grpc.Up
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) GetOffices(ctx context.Context, req *grpc.GetOfficesRequest) (*grpc.GetOfficesResponse, error) {
-	res, err := s.service.Office().GetOffices(ctx, req)
+func (s *OmsUserManagementServer) GetBrokerHouses(ctx context.Context, req *grpc.GetBrokerHousesRequest) (*grpc.GetBrokerHousesResponse, error) {
+	res, err := s.service.BrokerHouse().GetBrokerHouses(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -35,8 +35,8 @@ func (s *OmsUserManagementServer) GetOffices(ctx context.Context, req *grpc.GetO
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) DeleteOffice(ctx context.Context, req *grpc.DeleteOfficeRequest) (*grpc.DeleteOfficeResponse, error) {
-	res, err := s.service.Office().DeleteOffice(ctx, req)
+func (s *OmsUserManagementServer) DeleteBrokerHouse(ctx context.Context, req *grpc.DeleteBrokerHouseRequest) (*grpc.DeleteBrokerHouseResponse, error) {
+	res, err := s.service.BrokerHouse().DeleteBrokerHouse(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err
@@ -45,8 +45,8 @@ func (s *OmsUserManagementServer) DeleteOffice(ctx context.Context, req *grpc.De
 	return res, nil
 }
 
-func (s *OmsUserManagementServer) GetOfficeByIdOrEmail(ctx context.Context, req *grpc.GetOfficeByIdOrEmailRequest) (*grpc.GetOfficeByIdOrEmailResponse, error) {
-	res, err := s.service.Office().GetOfficeByIdOrEmail(ctx, req)
+func (s *OmsUserManagementServer) GetBrokerHouseById(ctx context.Context, req *grpc.GetBrokerHouseByIdRequest) (*grpc.GetBrokerHouseByIdResponse, error) {
+	res, err := s.service.BrokerHouse().GetBrokerHouseById(ctx, req)
 	if err != nil {
 		s.log.Error(ctx, err.Error())
 		return nil, err

@@ -2,10 +2,8 @@ package service
 
 import (
 	"context"
-	//"fmt"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	//pg "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models/pg"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
 )
 
@@ -17,14 +15,14 @@ type MapTraderTeams interface {
 }
 
 type MapTraderTeam struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type MapTraderReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) MapTraderTeam() MapTraderTeams {
+func (ms *OmsUserManagementService) MapTraderTeam() MapTraderTeams {
 	return &MapTraderReceiver{
 		ms,
 	}

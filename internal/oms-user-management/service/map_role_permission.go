@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
 	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
@@ -34,10 +35,9 @@ func (ms *OmsUserManagementService) MapRolePermission() MapRolePermissions {
 func (s *MapRolePermissionReceiver) CreateMapRolePermission(ctx context.Context, req *grpc.CreateMapRolePermissionRequest) (*grpc.CreateMapRolePermissionResponse, error) {
 
 	rolePermission := &model.MapRolePermission{
-		ReferenceType: req.UserType.String(),
-		ReferenceID:   req.ReferenceId,
-		PermissionID:  req.PermissionId,
-		IsEnabled:     req.IsEnabled,
+		RoleID:       req.RoleId,
+		PermissionID: req.PermissionId,
+		IsEnabled:    req.IsEnabled,
 	}
 
 	// Call the database method to create the trader
@@ -57,11 +57,10 @@ func (s *MapRolePermissionReceiver) CreateMapRolePermission(ctx context.Context,
 func (s *MapRolePermissionReceiver) UpdateMapRolePermission(ctx context.Context, req *grpc.UpdateMapRolePermissionRequest) (*grpc.UpdateMapRolePermissionResponse, error) {
 
 	rolePermission := &model.MapRolePermission{
-		ReferenceType: req.ReferenceType.String(),
-		ReferenceID:   req.ReferenceId,
-		PermissionID:  req.PermissionId,
-		IsEnabled:     req.IsEnabled,
-		ID:            req.Id,
+		RoleID:       req.RoleId,
+		PermissionID: req.PermissionId,
+		IsEnabled:    req.IsEnabled,
+		ID:           req.Id,
 	}
 	// Call the database method to create the trader
 	err := s.db.MapRolePermission().UpdateMapRolePermission(ctx, rolePermission)
@@ -89,8 +88,7 @@ func (s *MapRolePermissionReceiver) GetMapRolePermissions(ctx context.Context, r
 	for _, item := range res {
 
 		rolePermission := &grpc.GetMapRolePermissionsResponseMappedRoleList{
-
-			ReferenceId:  item.ReferenceID,
+			RoleId:       item.RoleID,
 			PermissionId: item.PermissionID,
 			IsEnabled:    item.IsEnabled,
 		}
@@ -124,35 +122,37 @@ func (s *MapRolePermissionReceiver) DeleteMapRolePermission(ctx context.Context,
 }
 
 func (s *MapRolePermissionReceiver) GetMapRolePermissionById(ctx context.Context, req *grpc.GetMapRolePermissionByIdRequest) (*grpc.GetMapRolePermissionByIdResponse, error) {
-
-	rolePermission, err := s.db.MapRolePermission().GetMapRolePermissionById(ctx, req)
+	// Call service to get permissions
+	res, err := s.db.MapRolePermission().GetMapRolePermissionById(ctx, req)
 	if err != nil {
-		s.log.Error(ctx, "Failed to fetch map role Permission", zap.Error(err))
-		return nil, status.Error(codes.Internal, "Failed to fetch role Permission")
-	}
-	referenceType := grpc.UserType_TRADER
-	if rolePermission.ReferenceType == "TRADER" {
-		referenceType = grpc.UserType_TRADER
-	} else if rolePermission.ReferenceType == "INVESTOR" {
-		referenceType = grpc.UserType_INVESTOR
-	} else if rolePermission.ReferenceType == "BROKER_ADMIN" {
-		referenceType = grpc.UserType_BROKER_ADMIN
-	} else if rolePermission.ReferenceType == "USER_TYPE_UNSPECIFIED" {
-		referenceType = grpc.UserType_USER_TYPE_UNSPECIFIED
-	} else {
-		return nil, status.Error(codes.InvalidArgument, "Invalid role Permission")
+		s.log.Error(ctx, err.Error())
+		return nil, status.Errorf(codes.Internal, "failed to fetch permissions: %v", err)
 	}
 
-	// Map the raw data to the gRPC response format
+	// Transform response into expected format
+	var rolesAndPermissions []*grpc.RolesAndPermissions
+	for _, perm := range res {
+		rolesAndPermissions = append(rolesAndPermissions, &grpc.RolesAndPermissions{
+			RoleId:       perm.RoleID,
+			PermissionId: perm.PermissionID,
+			Name:         perm.Name,
+			IsEnabled:    perm.IsEnabled,
+		})
+	}
+
+	// Create response object
 	response := &grpc.GetMapRolePermissionByIdResponse{
-		UserType:     referenceType,
-		ReferenceId:  rolePermission.ReferenceID,
-		PermissionId: rolePermission.PermissionID,
-		IsEnabled:    rolePermission.IsEnabled,
-		Id:           rolePermission.ID,
+		RolesAndPermissions: rolesAndPermissions,
+		Code:                0,
+	}
+	// Log JSON representation (optional)
+	jsonData, err := json.Marshal(response)
+	if err == nil {
+		s.log.Info(ctx, "Response JSON: "+string(jsonData))
+	} else {
+		s.log.Error(ctx, "Failed to serialize response to JSON: "+err.Error())
 	}
 
 	return response, nil
-}
 
-// Map the result to the response format
+}

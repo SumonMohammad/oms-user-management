@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	model "gitlab.techetronventures.com/core/grpctest/internal/grpctest/models"
-	"gitlab.techetronventures.com/core/grpctest/pkg/grpc"
+	model "gitlab.techetronventures.com/core/oms-user-management/internal/oms-user-management/models"
+	"gitlab.techetronventures.com/core/oms-user-management/pkg/grpc"
 	"go.uber.org/zap"
 )
 
@@ -14,14 +14,14 @@ type TradersTws interface {
 	DeleteTraderTws(ctx context.Context, req *grpc.DeleteTraderTwsMapRequest) (*grpc.DeleteTraderTwsMapResponse, error)
 }
 type TraderTws struct {
-	service *GrpctestService
+	service *OmsUserManagementService
 }
 
 type TraderTwsReceiver struct {
-	*GrpctestService
+	*OmsUserManagementService
 }
 
-func (ms *GrpctestService) TraderTws() TradersTws {
+func (ms *OmsUserManagementService) TraderTws() TradersTws {
 	return &TraderTwsReceiver{
 		ms,
 	}

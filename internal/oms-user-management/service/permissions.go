@@ -9,147 +9,131 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-type Privileges interface {
-	CreatePrivilege(ctx context.Context, req *grpc.CreatePrivilegeRequest) (*grpc.CreatePrivilegeResponse, error)
-	UpdatePrivilege(ctx context.Context, req *grpc.UpdatePrivilegeRequest) (*grpc.UpdatePrivilegeResponse, error)
-	GetPrivileges(ctx context.Context, req *grpc.GetPrivilegesRequest) (*grpc.GetPrivilegesResponse, error)
-	DeletePrivilege(ctx context.Context, req *grpc.DeletePrivilegeRequest) (*grpc.DeletePrivilegeResponse, error)
-	GetPrivilegeById(ctx context.Context, req *grpc.GetPrivilegeByIdRequest) (*grpc.GetPrivilegeByIdResponse, error)
+type Permissions interface {
+	CreatePermission(ctx context.Context, req *grpc.CreatePermissionRequest) (*grpc.CreatePermissionResponse, error)
+	UpdatePermission(ctx context.Context, req *grpc.UpdatePermissionRequest) (*grpc.UpdatePermissionResponse, error)
+	GetPermissions(ctx context.Context, req *grpc.GetPermissionsRequest) (*grpc.GetPermissionsResponse, error)
+	DeletePermission(ctx context.Context, req *grpc.DeletePermissionRequest) (*grpc.DeletePermissionResponse, error)
+	GetPermissionById(ctx context.Context, req *grpc.GetPermissionByIdRequest) (*grpc.GetPermissionByIdResponse, error)
 }
 
-type Privilege struct {
+type Permission struct {
 	service *OmsUserManagementService
 }
 
-type PrivilegeReceiver struct {
+type PermissionReceiver struct {
 	*OmsUserManagementService
 }
 
-func (ms *OmsUserManagementService) Privilege() Privileges {
-	return &PrivilegeReceiver{
+func (ms *OmsUserManagementService) Permission() Permissions {
+	return &PermissionReceiver{
 		ms,
 	}
 }
 
-func (s *PrivilegeReceiver) CreatePrivilege(ctx context.Context, req *grpc.CreatePrivilegeRequest) (*grpc.CreatePrivilegeResponse, error) {
+func (s *PermissionReceiver) CreatePermission(ctx context.Context, req *grpc.CreatePermissionRequest) (*grpc.CreatePermissionResponse, error) {
 
-	privilege := &model.Privilege{
-		Name:               req.Name,
-		PrivilegeType:      req.PrivilegeType.String(),
-		PrivilegeShortName: req.PrivilegeShortName,
-		Description:        req.Description,
-		IsDeleted:          req.IsDeleted,
-		IsEnabled:          req.IsEnabled,
-		Status:             req.Status.String(),
+	permission := &model.Permission{
+		Name:        req.Name,
+		Description: req.Description,
+		IsEnabled:   req.IsEnabled,
 	}
 
 	// Call the database method to create the trader
-	err := s.db.Privilege().CreatePrivilege(ctx, privilege)
+	err := s.db.Permission().CreatePermission(ctx, permission)
 	if err != nil {
-		msg := "failed to create employee"
+		msg := "failed to create permission"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
 
 	// Return a successful response
-	return &grpc.CreatePrivilegeResponse{
+	return &grpc.CreatePermissionResponse{
 		Code: 0,
 	}, nil
 }
 
-func (s *PrivilegeReceiver) UpdatePrivilege(ctx context.Context, req *grpc.UpdatePrivilegeRequest) (*grpc.UpdatePrivilegeResponse, error) {
+func (s *PermissionReceiver) UpdatePermission(ctx context.Context, req *grpc.UpdatePermissionRequest) (*grpc.UpdatePermissionResponse, error) {
 
-	privilege := &model.Privilege{
-		Name:               req.Name,
-		PrivilegeType:      req.PrivilegeType.String(),
-		PrivilegeShortName: req.PrivilegeShortName,
-		Description:        req.Description,
-		IsDeleted:          req.IsDeleted,
-		IsEnabled:          req.IsEnabled,
-		Status:             req.Status.String(),
+	permission := &model.Permission{
+		Name:        req.Name,
+		Description: req.Description,
+		IsEnabled:   req.IsEnabled,
 	}
 	// Call the database method to create the trader
-	err := s.db.Privilege().UpdatePrivilege(ctx, privilege)
+	err := s.db.Permission().UpdatePermission(ctx, permission)
 	if err != nil {
-		msg := "failed to update oms user"
+		msg := "failed to update permission"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
 
 	// Return a successful response
-	return &grpc.UpdatePrivilegeResponse{
+	return &grpc.UpdatePermissionResponse{
 		Code: 0,
 	}, nil
 }
-func (s *PrivilegeReceiver) GetPrivileges(ctx context.Context, req *grpc.GetPrivilegesRequest) (*grpc.GetPrivilegesResponse, error) {
+func (s *PermissionReceiver) GetPermissions(ctx context.Context, req *grpc.GetPermissionsRequest) (*grpc.GetPermissionsResponse, error) {
 
-	res, count, err := s.db.Privilege().GetPrivileges(ctx, req)
+	res, count, err := s.db.Permission().GetPermissions(ctx, req)
 	if err != nil {
-		msg := "failed to get privilege"
+		msg := "failed to get Permission"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
-	privileges := []*grpc.GetPrivilegesResponsePrivilegeList{}
+	permissions := []*grpc.GetPermissionsResponse_PermissionList{}
 
 	for _, item := range res {
 
-		privilege := &grpc.GetPrivilegesResponsePrivilegeList{
-			Id:        item.ID,
-			IsDeleted: item.IsDeleted,
-			IsEnabled: item.IsEnabled,
+		permission := &grpc.GetPermissionsResponse_PermissionList{
+			Id:          item.ID,
+			Name:        item.Name,
+			Description: item.Description,
+			IsEnabled:   item.IsEnabled,
 		}
-		privileges = append(privileges, privilege)
+		permissions = append(permissions, permission)
 	}
-	return &grpc.GetPrivilegesResponse{
-		Privileges: privileges,
+	return &grpc.GetPermissionsResponse{
+		Permissions: permissions,
 		PaginationResponse: &grpc.PaginationInfoResponse{
 			TotalRecordCount: int32(count),
 		},
 	}, nil
 }
 
-func (s *PrivilegeReceiver) DeletePrivilege(ctx context.Context, req *grpc.DeletePrivilegeRequest) (*grpc.DeletePrivilegeResponse, error) {
-	privilege := &model.Privilege{
+func (s *PermissionReceiver) DeletePermission(ctx context.Context, req *grpc.DeletePermissionRequest) (*grpc.DeletePermissionResponse, error) {
+	permission := &model.Permission{
 		ID: req.Id,
 	}
 
 	// Call the database method to create the trader
-	err := s.db.Privilege().DeletePrivilege(ctx, privilege)
+	err := s.db.Permission().DeletePermission(ctx, permission)
 	if err != nil {
-		msg := "failed to delete employee"
+		msg := "failed to delete permission"
 		s.log.Error(ctx, msg, zap.Error(err))
 		return nil, err
 	}
 
 	// Return a successful response
-	return &grpc.DeletePrivilegeResponse{
+	return &grpc.DeletePermissionResponse{
 		Code: 0,
 	}, nil
 }
 
-func (s *PrivilegeReceiver) GetPrivilegeById(ctx context.Context, req *grpc.GetPrivilegeByIdRequest) (*grpc.GetPrivilegeByIdResponse, error) {
+func (s *PermissionReceiver) GetPermissionById(ctx context.Context, req *grpc.GetPermissionByIdRequest) (*grpc.GetPermissionByIdResponse, error) {
 
-	privilege, err := s.db.Privilege().GetPrivilegeById(ctx, req)
+	permission, err := s.db.Permission().GetPermissionById(ctx, req)
 	if err != nil {
-		s.log.Error(ctx, "Failed to fetch Employee", zap.Error(err))
-		return nil, status.Error(codes.Internal, "Failed to fetch Employee")
-	}
-	statusOfPrivilege := grpc.Status_PENDING
-	if privilege.Status == "ACTIVE" {
-		statusOfPrivilege = grpc.Status_ACTIVE
+		s.log.Error(ctx, "Failed to fetch permission", zap.Error(err))
+		return nil, status.Error(codes.Internal, "Failed to fetch permission")
 	}
 
-	privilegeType := grpc.PrivilegeType_UNSPECIFIED_PRIVILEGE
 	// Map the raw data to the gRPC response format
-	response := &grpc.GetPrivilegeByIdResponse{
-		Id:                 privilege.ID,
-		Name:               privilege.Name,
-		PrivilegeShortName: privilege.PrivilegeShortName,
-		Description:        privilege.Description,
-		PrivilegeType:      privilegeType,
-		Status:             statusOfPrivilege,
-		IsDeleted:          privilege.IsDeleted,
-		IsEnabled:          privilege.IsEnabled,
+	response := &grpc.GetPermissionByIdResponse{
+		Id:          permission.ID,
+		Name:        permission.Name,
+		Description: permission.Description,
+		IsEnabled:   permission.IsEnabled,
 	}
 
 	return response, nil
